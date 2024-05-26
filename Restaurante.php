@@ -54,11 +54,25 @@
       </div>
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">Categoria</label>
-        <select class="form-control" name="sexo" id="sexo" required>
+
+        <?php
+        // require para la conexión a la base de datos
+        require "conexion.php";
+        $cnn = new conexion();
+        $pps = $cnn->getConexion()->prepare("SELECT * FROM categoriaDeComida");
+        $pps->execute();
+        ?>
+
+        <select class="form-control" name="categoria" id="categoria" required>
           <option value="" disabled selected style="color: #999;">Seleccione la categoria</option>
-          <option value="m">Mexicana</option>
-          <option value="f">Asiatica</option>
+          <?php
+          // Bucle para recorrer las categorías obtenidas de la base de datos
+          while ($datos = $pps->fetchObject()) {
+            echo '<option value="' . $datos->idCategoriaDeComida . '">' . $datos->Categoria . '</option>';
+          }
+          ?>
         </select>
+
       </div>
       <button type="submit" class="btn btn-primary" name="btnregistrar" value="ok">Agregar</button>
     </form>
@@ -66,6 +80,7 @@
       <table class="table">
         <thead class="bg.info">
           <tr>
+            <th scope="col">idPlatillo</th>
             <th scope="col">Platillo</th>
             <th scope="col">Precio</th>
             <th scope="col">Categoria</th>
@@ -74,17 +89,20 @@
         </thead>
         <tbody>
           <?php
-          include "modelo/conexion.php";
-          $sql = $conexion->query("select * from empleados");
-          while ($datos = $sql->fetch_object()) { ?>
+          $cnn1 = new conexion();
+          $pps1 = $cnn1->getConexion()->prepare("SELECT * FROM platillos");
+          $pps1->execute();
+          while ($datos = $pps1->fetchObject()) {
+            ?>
             <tr>
-              <td></td>
-              <td></td>
-              <td></td>
+              <td><?= $datos->idPlatillos ?></td>
+              <td><?= $datos->nombredelplatillo ?></td>
+              <td><?= $datos->precio ?></td>
+              <td><?= $datos->idCategoriaDeComida ?></td>
               <td>
-                <a href="modificar.php?id=<?= $datos->documento ?>" class="btn btn-small btn-warning"><i
+                <a href="modificar.php?id=<?= $datos->idPlatillos ?>" class="btn btn-small btn-warning"><i
                     class="fa-solid fa-pen-to-square"></i></a>
-                <a href="Restaurante.php?id=<?= $datos->documento ?>" class="btn btn-small btn-danger"><i
+                <a href="Restaurante.php?id=<?= $datos->idPlatillos ?>" class="btn btn-small btn-danger"><i
                     class="fa-solid fa-trash"></i></a>
               </td>
             </tr>

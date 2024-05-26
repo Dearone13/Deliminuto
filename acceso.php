@@ -73,43 +73,89 @@
       </div>
    </div>
    <div popover id="showLogin" class="showLogin">
-      <form>
+      <form method="post" action="acceso.php">
          <div class="field">
             <label id="title" class="label has-text-warning">Inicio de sesión restaurante</label>
             <label class="label has-text-warning">Nombre Restaurante</label>
             <div class="control">
-               <input class="input is-warning" type="text" placeholder="Nombre Restaurante" />
+               <input class="input is-warning" type="text" placeholder="Nombre Restaurante" name="Rname" />
             </div>
          </div>
          <div class="field">
             <label class="label has-text-warning">ID Restaurante</label>
             <div class="control">
-               <input class="input is-warning" type="password" placeholder="ID Restaurante" />
+               <input class="input is-warning" type="password" placeholder="ID Restaurante" name="RID" />
             </div>
          </div>
-         <button class="button is-warning" type="button" value="cancel" id="accessA">Acceder</button>
-         <p>No tienes una cuenta, <a href="">Registrate gratis</a></p>
+         <button class="button is-warning" type="submit" id="accessA" name="accederR">Acceder</button>
+         <p>No tienes una cuenta, <a href="registro - restaurante.php">Registrate gratis</a></p>
       </form>
    </div>
    <div popover id="showLoginC">
-      <form>
+      <form method="post" action="acceso.php">
          <div class="field">
             <label id="title" class=" label has-text-warning">Inicio de sesión</label>
             <label class="label has-text-warning">Id de usuario</label>
             <div class="control">
-               <input class="input is-warning" type="text" placeholder="Id de usuario" />
+               <input class="input is-warning" type="text" placeholder="Id de usuario" name="accederID" />
             </div>
          </div>
          <div class="field">
             <label class="label has-text-warning">Contraseña</label>
             <div class="control">
-               <input class="input is-warning" type="password" placeholder="Contraseña" />
+               <input class="input is-warning" type="password" placeholder="Contraseña" name="accederP" />
             </div>
          </div>
-         <button class="button is-warning">Acceder</button>
+         <button class="button is-warning" type="submit" name="accederC">Acceder</button>
          <p>No tienes una cuenta, <a href="">Registrate gratis</a></p>
       </form>
    </div>
+   <?php
+   require "conexion.php";
+   $cnn = new conexion();
+
+   if ($_SERVER["REQUEST_METHOD"] == "POST") {
+      if (isset($_POST['accederR'])) {
+         $Rname = $_POST['Rname'];
+         $RID = $_POST['RID'];
+         $query = "INSERT INTO LoginRestaurante (Fecha, Restaurante, idRestaurante) VALUES (GETDATE(), '$Rname', '$RID')";
+         try {
+            $pss = $cnn->getConexion();
+            $affectedRows = $pss->exec($query);
+            if ($affectedRows === false) {
+               throw new PDOException("Error en la inserción.");
+            } else {
+               $lastInsertId = $pss->lastInsertId();
+               echo "<script>console.log('Inserción exitosa. ID insertado: " . $lastInsertId . "');</script>";
+            }
+         } catch (PDOException $e) {
+            $errorMessage = "Error al realizar la inserción.";
+            echo "<script>console.log('" . $errorMessage . "');</script>";
+         }
+      } else if (isset($_POST['accederC'])) {
+         $CID = $_POST['accederID'];
+         $contrasena = $_POST['accederP'];
+         $query = "INSERT INTO LoginUsuario(Fecha, Usuario, Contraseña) VALUES (GETDATE(), '$CID', '$contrasena')";
+         try {
+            $pss = $cnn->getConexion();
+            $affectedRows = $pss->exec($query);
+            if ($affectedRows === false) {
+               throw new PDOException("Error en la inserción.");
+            } else {
+               $lastInsertId = $pss->lastInsertId();
+               echo "<script>console.log('Inserción exitosa. ID insertado: " . $lastInsertId . "');</script>";
+            }
+         } catch (PDOException $e) {
+            $errorMessage = "Error al realizar la inserción.";
+            echo "<script>console.log('" . $errorMessage . "');</script>";
+         }
+
+      }
+   } else {
+
+   }
+
+   ?>
 </body>
 
 </html>
